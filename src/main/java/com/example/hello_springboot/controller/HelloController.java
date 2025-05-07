@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
+@Tag(name = "あいさつAPI",description = "名前を受け取ってあいさつメッセージを返すAPI群"
+)
 public class HelloController {
     @Autowired
     private HelloService helloService;
