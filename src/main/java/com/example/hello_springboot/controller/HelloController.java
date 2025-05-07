@@ -1,0 +1,51 @@
+package com.example.hello_springboot.controller;
+
+import com.example.hello_springboot.dto.HelloRequest;
+import com.example.hello_springboot.dto.HelloResponse;
+import com.example.hello_springboot.service.HelloService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import java.time.LocalDateTime;
+
+@RestController
+public class HelloController {
+    @Autowired
+    private HelloService helloService;
+
+    @Operation(
+            summary = "あいさつメッセージを返すAPI",
+            description = "nameを指定してPOSTすると、その名前を含んだあいさつを返します。"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode="200",
+                    description = "正常にメッセージが返されました。",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = HelloResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "リクエストに問題があります（バリデーションエラーなど）"
+            )
+    })
+    @GetMapping("/hello/{name}")
+    public String helloWithPath(@PathVariable String name) {
+        return helloService.getPersonalizedMessage(name);
+    }
+
+    @PostMapping("/hello")
+    public HelloResponse postHello(@Valid @RequestBody HelloRequest request) {
+        String message = "Hello, " + request.getName() + "!";
+        LocalDateTime now = LocalDateTime.now();
+        return new HelloResponse(message,now);
+
+    }
+}
