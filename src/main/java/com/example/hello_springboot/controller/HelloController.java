@@ -1,5 +1,6 @@
 package com.example.hello_springboot.controller;
 
+import com.example.hello_springboot.dto.ErrorResponse;
 import com.example.hello_springboot.dto.HelloRequest;
 import com.example.hello_springboot.dto.HelloResponse;
 import com.example.hello_springboot.service.HelloService;
@@ -33,7 +34,11 @@ public class HelloController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "リクエストに問題があります（バリデーションエラーなど）"
+                    description = "バリデーションエラー",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
             )
     })
     @GetMapping("/hello/{name}")
