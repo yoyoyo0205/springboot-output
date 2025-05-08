@@ -36,11 +36,20 @@ public class HelloController {
                     mediaType = "application/json",
                     examples = {
                             @ExampleObject(
-                                    name = "サンプルリクエスト",
-                                    summary = "通常のリクエスト例",
-                                    description = "Airiさんに挨拶を送る例",
+                                    name = "通常パターン",
+                                    summary = "Airiさんにあいさつ",
                                     value = "{\"name\": \"Airi\"}"
-                            )
+                            ),
+                            @ExampleObject(
+                                    name = "空文字エラー",
+                                    summary = "バリデーションエラーになる例",
+                                    value = "{\"name\": \"\"}"
+                            ),
+                            @ExampleObject(
+                                    name = "全角名前",
+                                    summary = "日本語フルネームの例",
+                                    value = "{\"name\": \"佐藤 一郎\"}"
+                            ),
                     }
             )
 
