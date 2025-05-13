@@ -11,24 +11,27 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@Tag(name = "あいさつAPI",description = "名前を受け取ってあいさつメッセージを返すAPI群"
+@Tag(name = "あいさつAPI", description = "名前を受け取ってあいさつメッセージを返すAPI群"
 )
 public class HelloController {
     @Autowired
     private HelloService helloService;
 
     @Operation(
-            summary = "あいさつメッセージを返すAPI",
-            description = "nameを指定してPOSTすると、その名前を含んだあいさつを返します。"
+            summary = "POSTであいさつを返す",
+            description = "リクエストボディで名前を受け取り、Helloメッセージを返します。"
     )
     @RequestBody(
             required = true,
@@ -82,6 +85,33 @@ public class HelloController {
         String message = "Hello, " + request.getName() + "!";
         LocalDateTime now = LocalDateTime.now();
         return new HelloResponse(message, now);
-
     }
+
+    @Operation(
+            summary = "JWTトークンが必要な秘密のAPI",
+            description = "このAPIはセキュリティ設定（JWTトークン）が必要です。",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/secret")
+    public HelloResponse getSecretHello(@RequestParam String name) {
+        return new HelloResponse("秘密のあいさつだよ、" + name + "さん！");
+    }
+
+    @Operation(
+            summary = "ファイルをアップロードして名前を返すAPI",
+            description = "multipart/form-dataでファイルを送信すると、ファイル名が返ってきます。"
+    )
+    @RequestBody(
+            content = @Content(
+                    mediaType = "multipart/form-data",
+                    schema = @Schema(type = "object", format = "binary")
+            )
+    )
+    @PostMapping("/upload")
+    public HelloResponse uploadFile(@RequestPart("file") MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        return new HelloResponse("アップロード成功: " + fileName);
+    }
+
+
 }
