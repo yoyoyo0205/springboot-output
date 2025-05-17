@@ -120,7 +120,7 @@ public class HelloController {
             security = @SecurityRequirement(name = "basicAuth")
     )
     @GetMapping("/secure")
-    public HelloResponse secureHello(@RequestParam String name){
+    public HelloResponse secureHello(@RequestParam(name = "name",required = false,defaultValue = "名無しさん") String name){
         return new HelloResponse("保護されたあいさつ：" + name);
     }
 
