@@ -4,15 +4,18 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+//@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -33,11 +36,12 @@ public class GlobalExceptionHandler {
         errors.put("message", errorMessage);
         return errors;
     }
-
+    
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception e){
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("⚠ 入力エラーまたは不正なリクエストです：" + e.getMessage());
+    public ModelAndView handleException(Exception e) {
+        ModelAndView mv = new ModelAndView("error-custom");
+        mv.addObject("message", e.getMessage());
+        return mv;
     }
+
 }
