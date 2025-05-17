@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
+@RequestMapping("/hello")
 @Tag(name = "あいさつAPI", description = "名前を受け取ってあいさつメッセージを返すAPI群"
 )
 public class HelloController {
@@ -75,12 +76,12 @@ public class HelloController {
                     )
             )
     })
-    @GetMapping("/hello/{name}")
+    @GetMapping("/{name}")
     public String helloWithPath(@PathVariable String name) {
         return helloService.getPersonalizedMessage(name);
     }
 
-    @PostMapping("/hello")
+    @PostMapping("/")
     public HelloResponse postHello(@Valid @org.springframework.web.bind.annotation.RequestBody HelloRequest request) {
         String message = "Hello, " + request.getName() + "!";
         LocalDateTime now = LocalDateTime.now();
@@ -113,5 +114,14 @@ public class HelloController {
         return new HelloResponse("アップロード成功: " + fileName);
     }
 
+    @Operation(
+            summary ="認証が必要なあいさつAPI",
+            description = "Basic認証に成功したユーザーだけが利用できます。",
+            security = @SecurityRequirement(name = "basicAuth")
+    )
+    @GetMapping("/secure")
+    public HelloResponse secureHello(@RequestParam String name){
+        return new HelloResponse("保護されたあいさつ：" + name);
+    }
 
 }
