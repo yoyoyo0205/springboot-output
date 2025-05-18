@@ -1,13 +1,23 @@
 <configuration>
-    <appender name = "FILE" class="ch.qos.logback.core.FileAppender">
+
+    <appender name ="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>C:/logs/springboot/app.log</file> <!-- ← Windows向けフルパス -->
-        <append>true</append>
+
+        <!-- ローテーションルール -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- ログファイルの保存パターン(yyyy-MM-dd毎に切り替え) -->
+            <fileNamePattern>C:/logs/springboot/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保存しておくログファイルの最大日数（例：30日） -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <!-- ログ出力形式 -->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="ROLLING"/>
     </root>
 </configuration>
