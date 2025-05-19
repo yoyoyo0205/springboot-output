@@ -23,10 +23,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@RequestMapping("/hello")
+@RequestMapping("/api")
 @Tag(name = "あいさつAPI", description = "名前を受け取ってあいさつメッセージを返すAPI群"
 )
 public class HelloController {
+
+    @GetMapping("/hello")
+    public String hello(){
+        return "Hello, secured world!";
+    }
+
     @Autowired
     private HelloService helloService;
 
