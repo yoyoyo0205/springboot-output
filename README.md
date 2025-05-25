@@ -21,10 +21,8 @@
 }
 ```
 2. 返されたトークンを /admin/hello にAuthorizationヘッダーで送信
-```json
-{
+```
 Authorization: Bearer <token>
-}
 ```
 
 ## 🔒 ロール制御の詳細
