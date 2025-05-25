@@ -4,48 +4,52 @@ import com.example.hello_springboot.dto.AuthRequest;
 import com.example.hello_springboot.dto.AuthResponse;
 import com.example.hello_springboot.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 
 public class AuthController {
-
-    //    @Autowired
-//    private AuthenticationManager authenticationManager;
-//
-//    @Autowired
-//    private JwtUtil jwtUtil;
+    @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
     private final JwtUtil jwtUtil;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
     }
 
+
+
+
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
         try {
             System.out.println("ログイン試行: " + authRequest.getUsername() + authRequest.getPassword());
-//            System.out.println("authenticationManager: " + authenticationManager);
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUsername(), authRequest.getPassword()
                     )
             );
-            System.out.println("認証成功");
+            // ここでUserDetailsを取得
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
+            // UserDetailsを使ってトークン生成
+            String token = jwtUtil.generateToken(userDetails);
 
-            String token = jwtUtil.generateToken(authRequest.getUsername());
-            System.out.println("トークン生成成功");
-            return new AuthResponse(token);
+            return ResponseEntity.ok(new AuthResponse(token));
 
         } catch (AuthenticationException e) {
-            System.out.println("認証失敗：" + e.getMessage());
-            throw new RuntimeException("Invalid username/password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("認証失敗：ユーザ名かパスワードが正しくありません");
         }
     }
 }

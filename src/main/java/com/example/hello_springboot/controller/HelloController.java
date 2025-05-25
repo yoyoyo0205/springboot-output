@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -126,7 +127,7 @@ public class HelloController {
             security = @SecurityRequirement(name = "basicAuth")
     )
     @GetMapping("/secure")
-    public HelloResponse secureHello(@RequestParam(name = "name",required = false,defaultValue = "名無しさん") String name){
+    public HelloResponse secureHello(@RequestParam(name = "name",required = false,defaultValue = "名無しさん") String name) {
         return new HelloResponse("保護されたあいさつ：" + name);
     }
 

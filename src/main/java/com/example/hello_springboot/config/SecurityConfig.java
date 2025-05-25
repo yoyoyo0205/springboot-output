@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
@@ -43,6 +45,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/h2-console/**").permitAll() // ログインは誰でもOK
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()                       // 他は認証必要
                 )
                 .headers(headers -> headers.frameOptions().disable())
@@ -54,23 +58,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            HttpSecurity http,
-//            PasswordEncoder passwordEncoder,
-//            CustomUserDetailsService userDetailsService
-//    ) throws Exception {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(userDetailsService);
-//        authProvider.setPasswordEncoder(passwordEncoder);
-//
-//        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-//        authBuilder.authenticationProvider(authProvider);
-//
-//        return authBuilder.build();
-//    }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
