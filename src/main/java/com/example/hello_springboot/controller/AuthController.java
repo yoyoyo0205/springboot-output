@@ -29,6 +29,14 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
+    @Autowired
+    public AuthController(AuthenticationManager authenticationManager,
+                          UserDetailsService userDetailsService,
+                          JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
+    }
 
 
 
