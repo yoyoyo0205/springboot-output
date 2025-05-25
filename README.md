@@ -22,7 +22,9 @@
 ```
 2. 返されたトークンを /admin/hello にAuthorizationヘッダーで送信
 ```json
+{
 Authorization: Bearer <token>
+}
 ```
 
 ## 🔒 ロール制御の詳細
@@ -31,6 +33,6 @@ Authorization: Bearer <token>
 | `/admin/hello` | `ROLE_ADMIN` | 管理者専用メッセージ返却 |
 
 ## 🏗️ 今後追加予定
- - Reactとの画面連携
+- Reactとの画面連携
 - Swagger UI対応
 - トークン有効期限＋リフレッシュ
