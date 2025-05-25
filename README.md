@@ -1,24 +1,36 @@
-# Spring Boot - 学習用プロジェクト
+# Spring Boot Login JWT App
 
-このリポジトリは、Spring Boot + Swagger(OpenAPI) を用いてREST APIの開発・設計を学ぶためのプロジェクトです。
-また、この延長上でオリジナルポートフォリオ作成にもつなげます。
+## 🔧 使用技術
+- Spring Boot 3.2
+- Spring Security + JWT
+- H2 Database（ファイルモード）
+- REST API（Postman / Swagger 対応）
 
-## 使用技術
+## 💡 機能概要
+- DB連携ユーザーによるログイン認証
+- JWTトークンによる認証・認可
+- ロール（ADMIN / USER）制御
+- `/auth/login` でトークン取得、`/admin/hello` で認可付きAPI呼び出し
 
-- Spring Boot 3.2.5
-- Swagger UI (springdoc-openapi 2.5.0)
-- Java 17
-- Maven
+## 🧪 テスト方法
+1. `/auth/login` に下記JSONでPOST
+```json
+{
+  "username": "airi",
+  "password": "password"
+}
+```
+2. 返されたトークンを /admin/hello にAuthorizationヘッダーで送信
+```json
+Authorization: Bearer <token>
+```
 
-## 学習内容ログ
+## 🔒 ロール制御の詳細
+| URL            | ロール          | 内容           |
+| -------------- | ------------ | ------------ |
+| `/admin/hello` | `ROLE_ADMIN` | 管理者専用メッセージ返却 |
 
-- [x] @RestController の使い方
-- [x] DTOのバリデーション
-- [x] Swagger UI 表示
-- [x] API仕様自動生成
-
-## 今後やること
-
-- [ ] Swaggerで例示付きレスポンス
-- [ ] DB連携（JPA + H2）
-- [ ] エラー共通レスポンス定義
+## 🏗️ 今後追加予定
+ - Reactとの画面連携
+- Swagger UI対応
+- トークン有効期限＋リフレッシュ
