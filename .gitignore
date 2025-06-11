@@ -41,3 +41,6 @@ build/
 *.jar
 *.war
 .env
+
+# プロパティファイルを除外
+src/main/resources/application.properties
