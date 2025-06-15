@@ -1,24 +1,19 @@
 package com.example.hello_springboot.config;
 
-import com.example.hello_springboot.security.CustomUserDetailsService;
 import com.example.hello_springboot.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -44,7 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/h2-console/**").permitAll() // ログインは誰でもOK
+                                "/h2-console/**",
+                                "/","/login/**","/oauth2/**").permitAll() // ログインは誰でもOK
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()                       // 他は認証必要
@@ -53,8 +49,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authenticationProvider(authenticationProvider) // ← これ追加！
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // ←JWTフィルター追加！
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // ←JWTフィルター追加
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("http://localhost:3000/oauth-success",true)
+                ); // ← OAuth2ログインの成功後リダイレクト先設定
 
         return http.build();
     }
